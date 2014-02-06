@@ -21,15 +21,28 @@ app.use(app.router);
 //app.use(express.static(path.join(__dirname, 'public')));
  
 app.get("/hola/:id",function(req,res){
+	if(req.session.conectado!=="S"){
+		res.send("Debe logarse");
+		return;
+	}
 	console.log("Entrando"+req.params.id);
 	console.log("Sesiones: "+req);
-	if(req.session.nombre==undefined){
-		console.log("Sin sesion");
-		req.session.nombre=req.params.id;
-	}else{
-		console.log("Con sesion: "+req.session.nombre);
-	}
+	
 	res.json({cosa:"que"});
+});
+
+app.post("/login",function(req,res){
+	var user=req.param('nick');
+	var password=req.param('password');
+	if(user=='vPalomo' && password=='03885536'){
+		console.log("Logado");
+		res.send("Logado");
+		req.session.conectado="S";
+	}else{
+		req.session.conectado="N";
+		console.log("Error en user o password");
+		res.send("Error en user o password");
+	}
 });
  
 http.createServer(app).listen(app.get('port'), function(){
